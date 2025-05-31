@@ -5,6 +5,7 @@ import com.sanjeevnode.rms.foodservice.utils.ApiResponse;
 import com.sanjeevnode.rms.foodservice.utils.AppLogger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -74,4 +75,9 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, "Food not found: " + ex.getMessage(), null);
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        log.warn("Authorization denied: %s", ex.getMessage());
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "Access denied: " + ex.getMessage(), null);
+    }
 }
