@@ -1,0 +1,20 @@
+services:
+  rms_food_postgres:
+    image: postgres:latest
+    container_name: rms_food_postgres
+    environment:
+      POSTGRES_DB: rms_food_db
+      POSTGRES_USER: rms_food_user
+      POSTGRES_PASSWORD: rms_food_password
+    ports:
+      - "7001:5432"
+    volumes:
+      - rms_food_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rms_food_postgres_network
+
+networks:
+  rms_food_postgres_network:
+
+volumes:
+  rms_food_postgres_data:
