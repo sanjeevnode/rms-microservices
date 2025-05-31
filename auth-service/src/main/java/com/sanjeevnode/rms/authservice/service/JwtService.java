@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +14,15 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
-@AllArgsConstructor
 public class JwtService {
 
     // Secret key for signing the JWT (should be stored securely in production)
-    private final String SECRET_KEY = "4cd83ac3313bcab0e441b9b0d16936453f626e9a7cb6198cd77c15f79a97fe38";
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
     // Token expiration time in milliseconds
-    private final long EXPIRATION_TIME = 1000 * 60;
+    @Value("${jwt.expiration}")
+    private long EXPIRATION_TIME;
 
     /**
      * Extract all claims from the JWT token.
@@ -105,6 +106,10 @@ public class JwtService {
                 .subject(user.getUsername()) // Set the subject (username)
                 .issuedAt(new Date(System.currentTimeMillis())) // Set the issue date
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Set the expiration date
+                .claim("id", user.getId())
+                .claim("role", user.getRole())
+                .claim("createdAt", user.getCreatedAt())
+                .claim("updatedAt", user.getUpdatedAt())
                 .signWith(getSignInKey()) // Sign the token with the secret key
                 .compact();
     }

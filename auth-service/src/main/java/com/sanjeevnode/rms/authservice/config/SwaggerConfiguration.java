@@ -1,5 +1,8 @@
 package com.sanjeevnode.rms.authservice.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -27,6 +30,21 @@ public class SwaggerConfiguration {
                 .version("1.0")
                 .description("API for managing user authentication and authorization")
                 .contact(myContact);
-        return new OpenAPI().info(information).servers(List.of(server));
+
+        // Define the security scheme
+        SecurityScheme securityScheme = new SecurityScheme()
+                .name("Bearer Authentication")
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT");
+
+        // Add the security requirement to use it globally
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("Bearer Authentication");
+
+        return new OpenAPI()
+                .info(information)
+                .servers(List.of(server))
+                .components(new Components().addSecuritySchemes("Bearer Authentication", securityScheme))
+                .addSecurityItem(securityRequirement);
     }
 }

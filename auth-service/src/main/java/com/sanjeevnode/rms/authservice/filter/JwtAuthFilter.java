@@ -1,4 +1,4 @@
-package com.sanjeevnode.rms.authservice.filter.filter;
+package com.sanjeevnode.rms.authservice.filter;
 
 import com.sanjeevnode.rms.authservice.service.JwtService;
 import com.sanjeevnode.rms.authservice.service.impl.UserDetailsServiceImpl;

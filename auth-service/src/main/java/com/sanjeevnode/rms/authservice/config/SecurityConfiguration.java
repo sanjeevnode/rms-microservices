@@ -1,6 +1,6 @@
 package com.sanjeevnode.rms.authservice.config;
 
-import com.sanjeevnode.rms.authservice.filter.filter.JwtAuthFilter;
+import com.sanjeevnode.rms.authservice.filter.JwtAuthFilter;
 import com.sanjeevnode.rms.authservice.service.impl.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers("/auth/**","/health")
+                                .requestMatchers("/auth/**","/health","/api-docs/**","/swagger-ui/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
