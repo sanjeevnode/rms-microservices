@@ -13,6 +13,26 @@ services:
     networks:
       - rms_food_postgres_network
 
+  rms_food_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rms_food_service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://rms_food_postgres:5432/rms_food_db
+      SPRING_DATASOURCE_USERNAME: rms_food_user
+      SPRING_DATASOURCE_PASSWORD: rms_food_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      JWT_SECRET: 107fc1bde509f3151f72f828c40001c9df1fde518a5d85972540dcd93a57118b
+      JWT_EXPIRATION: 360000
+    ports:
+      - "5001:5001"
+    depends_on:
+      - rms_food_postgres
+    networks:
+      - rms_food_postgres_network
+
 networks:
   rms_food_postgres_network:
 
