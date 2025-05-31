@@ -1,0 +1,20 @@
+services:
+  rms_auth_postgres:
+    image: postgres:latest
+    container_name: rms_auth_postgres
+    environment:
+      POSTGRES_DB: rms_auth_db
+      POSTGRES_USER: rms_auth_user
+      POSTGRES_PASSWORD: rms_auth_password
+    ports:
+      - "7000:5432"
+    volumes:
+      - rms_auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rms_auth_postgres_network
+
+networks:
+  rms_auth_postgres_network:
+
+volumes:
+  rms_auth_postgres_data:
