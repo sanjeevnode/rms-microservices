@@ -1,0 +1,13 @@
+services:
+  service-registry:
+    container_name: rms_service_registry
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - rms_service_registry_network
+
+networks:
+    rms_service_registry_network:
