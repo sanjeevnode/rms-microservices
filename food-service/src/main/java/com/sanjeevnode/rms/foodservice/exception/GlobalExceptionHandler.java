@@ -3,7 +3,6 @@ package com.sanjeevnode.rms.foodservice.exception;
 
 import com.sanjeevnode.rms.foodservice.utils.ApiResponse;
 import com.sanjeevnode.rms.foodservice.utils.AppLogger;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -80,11 +79,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
         log.warn("Authorization denied: %s", ex.getMessage());
         return buildErrorResponse(HttpStatus.FORBIDDEN, "Access denied: " + ex.getMessage(), null);
-    }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ApiResponse> handleExpiredJwtException(ExpiredJwtException ex) {
-        log.warn("JWT token expired: %s", ex.getMessage());
-        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "JWT token expired: " + ex.getMessage(), null);
     }
 }

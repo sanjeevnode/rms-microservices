@@ -47,4 +47,11 @@ public class AuthController {
         logger.info("Get user details endpoint hit");
         return authService.getUserDetails(username).buildResponse();
     }
+
+    @PostMapping("/auth/validate")
+    @Operation(summary = "Validate JWT token")
+    public ResponseEntity<ApiResponse> validateToken(@RequestParam String token) {
+        logger.info("Validate token endpoint hit");
+        return authService.validateToken(token).buildResponse();
+    }
 }

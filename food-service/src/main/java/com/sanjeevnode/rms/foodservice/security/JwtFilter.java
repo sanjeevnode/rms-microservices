@@ -1,7 +1,7 @@
 package com.sanjeevnode.rms.foodservice.security;
 
 import com.sanjeevnode.rms.foodservice.dto.UserDTO;
-import io.jsonwebtoken.Claims;
+import com.sanjeevnode.rms.foodservice.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final AuthService authService;
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
@@ -34,30 +34,23 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            return;
+            throw new InvalidTokenException("Invalid token");
         }
 
         String token = authHeader.substring(7);
+        UserDTO user = authService.validateToken(token);
 
-        if (jwtService.isTokenValid(token)) {
-            Claims claims = jwtService.extractAllClaims(token);
-
-            String username = claims.getSubject();
-            String role = claims.get("role", String.class);
-            String id = claims.get("id", String.class);
-            String createdAt = claims.get("createdAt", String.class);
-            String updatedAt = claims.get("updatedAt", String.class);
-
-            UserDTO userDTO = new UserDTO(id, username, role, createdAt, updatedAt);
-
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDTO,
-                    null,
-                    Collections.singletonList(new SimpleGrantedAuthority(role))
-            );
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (user == null) {
+            throw new InvalidTokenException("Invalid token");
         }
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                user,
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority(user.getRole()))
+        );
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
 
         filterChain.doFilter(request, response);
     }
