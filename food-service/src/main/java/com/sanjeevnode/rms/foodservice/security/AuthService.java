@@ -18,7 +18,7 @@ public class AuthService {
 
 
     public UserDTO validateToken(String token) {
-        String validateUrl = "http://localhost:5000/auth/validate?token=" + token;
+        String validateUrl = "http://AUTH-SERVICE:5000/auth/validate?token=" + token;
         logger.info("Validating token at URL: "+ validateUrl);
         ResponseEntity<ApiResponse> responseEntity =
                 restTemplate.postForEntity(validateUrl, null, ApiResponse.class);
