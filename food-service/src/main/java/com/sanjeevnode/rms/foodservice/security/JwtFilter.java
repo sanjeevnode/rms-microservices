@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            throw new InvalidTokenException("Invalid token");
+           return;
         }
 
         String token = authHeader.substring(7);

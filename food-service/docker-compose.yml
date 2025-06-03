@@ -11,7 +11,7 @@ services:
     volumes:
       - rms_food_postgres_data:/var/lib/postgresql/data
     networks:
-      - rms_food_postgres_network
+      - rms-network
 
   rms_food_service:
     build:
@@ -19,20 +19,20 @@ services:
       dockerfile: Dockerfile
     container_name: rms_food_service
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://rms_food_postgres:5432/rms_food_db
-      SPRING_DATASOURCE_USERNAME: rms_food_user
-      SPRING_DATASOURCE_PASSWORD: rms_food_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: "true"
+      RMS_FOOD_DATABASE_NAME: rms_food_postgres:5432/rms_food_db
+      RMS_FOOD_DATABASE_USER: rms_food_user
+      RMS_FOOD_DATABASE_PASSWORD: rms_food_password
+      AUTH_SERVICE_URL: http://rms_auth_service:5000
     ports:
       - "5001:5001"
     depends_on:
       - rms_food_postgres
     networks:
-      - rms_food_postgres_network
+      - rms-network
 
 networks:
-  rms_food_postgres_network:
+  rms-network:
+    external: true
 
 volumes:
   rms_food_postgres_data:

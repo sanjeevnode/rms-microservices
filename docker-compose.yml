@@ -1,0 +1,71 @@
+services:
+  rms-auth-postgres:
+    image: postgres:latest
+    container_name: rms-auth-postgres
+    environment:
+      POSTGRES_DB: rms_auth_db
+      POSTGRES_USER: rms_auth_user
+      POSTGRES_PASSWORD: rms_auth_password
+    ports:
+      - "7000:5432"
+    volumes:
+      - rms_auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rms-network
+
+  rms-auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: rms-auth-service
+    environment:
+      DATABASE_NAME: rms-auth-postgres:5432/rms_auth_db
+      DATABASE_USER: rms_auth_user
+      DATABASE_PASSWORD: rms_auth_password
+      JWT_SECRET: 107fc1bde509f3151f72f828c40001c9df1fde518a5d85972540dcd93a57118b
+      JWT_EXPIRATION: 360000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rms-auth-postgres
+    networks:
+      - rms-network
+
+  rms-food-postgres:
+    image: postgres:latest
+    container_name: rms-food-postgres
+    environment:
+      POSTGRES_DB: rms_food_db
+      POSTGRES_USER: rms_food_user
+      POSTGRES_PASSWORD: rms_food_password
+    ports:
+      - "7001:5432"
+    volumes:
+      - rms_food_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rms-network
+
+  rms-food-service:
+    build:
+      context: ./food-service
+      dockerfile: Dockerfile
+    container_name: rms-food-service
+    environment:
+      RMS_FOOD_DATABASE_NAME: rms-food-postgres:5432/rms_food_db
+      RMS_FOOD_DATABASE_USER: rms_food_user
+      RMS_FOOD_DATABASE_PASSWORD: rms_food_password
+      AUTH_SERVICE_URL: http://rms-auth-service:5000
+    ports:
+      - "5001:5001"
+    depends_on:
+      - rms-food-postgres
+    networks:
+      - rms-network
+
+volumes:
+  rms_auth_postgres_data:
+  rms_food_postgres_data:
+
+networks:
+  rms-network:
+    external: true

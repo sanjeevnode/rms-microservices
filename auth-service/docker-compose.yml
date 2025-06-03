@@ -11,7 +11,7 @@ services:
     volumes:
       - rms_auth_postgres_data:/var/lib/postgresql/data
     networks:
-      - rms_auth_postgres_network
+      - rms-network
 
   rms_auth_service:
     build:
@@ -19,9 +19,9 @@ services:
       dockerfile: Dockerfile
     container_name: rms_auth_service
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://rms_auth_postgres:5432/rms_auth_db
-      SPRING_DATASOURCE_USERNAME: rms_auth_user
-      SPRING_DATASOURCE_PASSWORD: rms_auth_password
+      DATABASE_NAME: rms_auth_postgres:5432/rms_auth_db
+      DATABASE_USER: rms_auth_user
+      DATABASE_PASSWORD: rms_auth_password
       JWT_SECRET: 107fc1bde509f3151f72f828c40001c9df1fde518a5d85972540dcd93a57118b
       JWT_EXPIRATION: 360000
     ports:
@@ -29,10 +29,11 @@ services:
     depends_on:
       - rms_auth_postgres
     networks:
-      - rms_auth_postgres_network
+      - rms-network
 
 networks:
-  rms_auth_postgres_network:
+  rms-network:
+    external: true
 
 volumes:
   rms_auth_postgres_data:
