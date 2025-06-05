@@ -1,0 +1,21 @@
+services:
+  rms_order_postgres:
+    image: postgres:latest
+    container_name: rms_order_postgres
+    environment:
+      POSTGRES_DB: rms_order_db
+      POSTGRES_USER: rms_order_user
+      POSTGRES_PASSWORD: rms_order_password
+    ports:
+      - "7002:5432"
+    volumes:
+      - rms_order_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rms-network
+
+volumes:
+  rms_order_postgres_data:
+
+networks:
+  rms-network:
+    external: true
