@@ -1,4 +1,14 @@
 services:
+  rms-service-registry:
+    build:
+      context: ./service-registry
+      dockerfile: Dockerfile
+    container_name: rms-service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - rms-network
+
   rms-auth-postgres:
     image: postgres:latest
     container_name: rms-auth-postgres
@@ -24,6 +34,7 @@ services:
       DATABASE_PASSWORD: rms_auth_password
       JWT_SECRET: 107fc1bde509f3151f72f828c40001c9df1fde518a5d85972540dcd93a57118b
       JWT_EXPIRATION: 360000
+      EUREKA_SERVICE_URL: http://rms-service-registry:8761/eureka/
     ports:
       - "5000:5000"
     depends_on:
@@ -55,6 +66,7 @@ services:
       RMS_FOOD_DATABASE_USER: rms_food_user
       RMS_FOOD_DATABASE_PASSWORD: rms_food_password
       AUTH_SERVICE_URL: http://rms-auth-service:5000
+      EUREKA_SERVICE_URL: http://rms-service-registry:8761/eureka/
     ports:
       - "5001:5001"
     depends_on:
@@ -62,9 +74,42 @@ services:
     networks:
       - rms-network
 
+  rms-order-postgres:
+    image: postgres:latest
+    container_name: rms-order-postgres
+    environment:
+      POSTGRES_DB: rms_order_db
+      POSTGRES_USER: rms_order_user
+      POSTGRES_PASSWORD: rms_order_password
+    ports:
+      - "7002:5432"
+    volumes:
+      - rms_order_postgres_data:/var/lib/postgresql/data
+    networks:
+      - rms-network
+
+  rms-order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    container_name: rms-order-service
+    environment:
+      RMS_ORDER_DATABASE_NAME: rms-order-postgres:5432/rms_order_db
+      RMS_ORDER_DATABASE_USER: rms_order_user
+      RMS_ORDER_DATABASE_PASSWORD: rms_order_password
+      AUTH_SERVICE_URL: http://rms-auth-service:5000
+      EUREKA_SERVICE_URL: http://rms-service-registry:8761/eureka/
+    ports:
+      - "5002:5002"
+    depends_on:
+      - rms-order-postgres
+    networks:
+      - rms-network
+
 volumes:
   rms_auth_postgres_data:
   rms_food_postgres_data:
+  rms_order_postgres_data:
 
 networks:
   rms-network:
