@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/auth")
 @Tag(name = "Restaurant Management System", description = "Authentication and Authorization")
 @AllArgsConstructor
 public class AuthController {
@@ -27,28 +27,28 @@ public class AuthController {
         return "Auth Service is running";
     }
 
-    @PostMapping("/auth/register")
+    @PostMapping("/v0/register")
     @Operation(summary = "Register a new user")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterUserDTO registerUserDTO) {
         logger.info("Register endpoint hit");
         return authService.register(registerUserDTO).buildResponse();
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/v0/login")
     @Operation(summary = "Login a user")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody RegisterUserDTO registerUserDTO) {
         logger.info("Login endpoint hit");
         return authService.login(registerUserDTO).buildResponse();
     }
 
-    @GetMapping("/user")
+    @GetMapping("/v1/user")
     @Operation(summary = "Get user details")
     public ResponseEntity<ApiResponse> getUserDetails(@RequestParam String username) {
         logger.info("Get user details endpoint hit");
         return authService.getUserDetails(username).buildResponse();
     }
 
-    @PostMapping("/auth/validate")
+    @PostMapping("/v0/validate")
     @Operation(summary = "Validate JWT token")
     public ResponseEntity<ApiResponse> validateToken(@RequestParam String token) {
         logger.info("Validate token endpoint hit");
